@@ -12,8 +12,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseUrl = 'http://localhost:3000/monsters'
     const monsterDiv = document.getElementById('monster-container')
 
+    const postNewMonster = async (body) => {
+        let req = await fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        })
+        let res = await req.json()
+        return res
+    }
+
     //2.
     // Above your list of monsters, you should have a form to create a new monster.
+    // You should have fields for name, age, and description, and a 'Create Monster
+    // Button'. When you click the button, the monster should be added to the list
+    // and saved in the API.
 
     const newMonster = () => {
 
@@ -28,20 +43,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputDescription = document.createElement('input')
         inputDescription.id = 'description'
         inputDescription.placeholder = 'description'
-        const btn = document.createElement('button')
-        btn.textContent = 'Create Your Monstr!'
+        const submitBtn = document.createElement('input')
+        submitBtn.type = 'submit'
+        submitBtn.textContent = 'Create Your Monstr!'
 
         form.append(inputName)
         form.append(inputAge)
         form.append(inputDescription)
-        form.append(btn)
+        form.append(submitBtn)
 
         const topDiv = document.getElementById('create-monster')
         topDiv.append(form)
 
-        form.addEventListener('click', (event) => {
+        form.addEventListener('submit', (event) => {
 
             event.preventDefault();
+            const monsterObj = {
+                name: event.target.name.value,
+                age: event.target.age.value,
+                description: event.target.description.value
+            }
+
+            postNewMonster(monsterObj);
 
         })
 
@@ -49,13 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     newMonster();
 
-    // You should have fields for name, age, and description, and a 'Create Monster
-    // Button'. When you click the button, the monster should be added to the list
-    // and saved in the API.
 
 
     const fetchData = async () => {
-        let req = await fetch(baseUrl)
+        let req = await fetch(`${baseUrl}?_limit=50&_page=1`)
         let res = await req.json()
         return res
     }
